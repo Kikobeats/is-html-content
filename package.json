@@ -1,7 +1,7 @@
 {
   "name": "is-html-content",
-  "description": "The simplest way for detecting HTML content.",
-  "homepage": "https://nicedoc.io/Kikobeats/is-html-content",
+  "description": "Detect whether a string looks like HTML content by checking tags and common markup patterns.",
+  "homepage": "https://github.com/Kikobeats/is-html-content",
   "version": "1.0.0",
   "main": "index.js",
   "author": {
@@ -18,10 +18,13 @@
   },
   "keywords": [
     "check",
+    "content",
     "detect",
     "elements",
     "html",
     "is",
+    "markup",
+    "sniff",
     "string",
     "tags"
   ],
@@ -29,18 +32,16 @@
   "devDependencies": {
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
-    "ava": "latest",
+    "c8": "latest",
     "ci-publish": "latest",
-    "conventional-github-releaser": "latest",
     "coveralls": "latest",
     "finepack": "latest",
     "git-authors-cli": "latest",
     "git-dirty": "latest",
-    "simple-git-hooks": "latest",
+    "github-generate-release": "latest",
     "nano-staged": "latest",
-    "npm-check-updates": "latest",
     "nyc": "latest",
-    "prettier-standard": "latest",
+    "simple-git-hooks": "latest",
     "standard": "latest",
     "standard-markdown": "latest",
     "standard-version": "latest"
@@ -53,38 +54,42 @@
   ],
   "scripts": {
     "clean": "rm -rf node_modules",
-    "contributors": "(git-authors-cli && finepack && git add package.json && git commit -m 'build: contributors' --no-verify) || true",
+    "contributors": "(npx git-authors-cli && npx finepack && git add package.json && git commit -m 'build: contributors' --no-verify) || true",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "standard-markdown README.md && standard",
     "postrelease": "npm run release:tags && npm run release:github && ci-publish",
-    "prerelease": "npm run update:check && npm run contributors",
+    "prerelease": "npm run contributors",
     "pretest": "npm run lint",
     "release": "standard-version -a",
-    "release:github": "conventional-github-releaser -p angular",
+    "release:github": "github-generate-release",
     "release:tags": "git push --follow-tags origin HEAD:master",
-    "test": "nyc ava",
-    "update": "ncu -u",
-    "update:check": "ncu -- --error-level 2"
+    "test": "c8 ava"
   },
   "license": "MIT",
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
-    ]
-  },
-  "simple-git-hooks": {
-  "commit-msg": "npx commitlint --edit",
-  "pre-commit": "npx nano-staged"
-},
-  "nano-staged": {
-    "package.json": [
-      "finepack"
     ],
+    "rules": {
+      "body-max-line-length": [
+        0
+      ]
+    }
+  },
+  "nano-staged": {
     "*.js": [
-      "prettier-standard"
+      "npx @kikobeats/prettier-standard",
+      "standard --fix"
     ],
     "*.md": [
       "standard-markdown"
+    ],
+    "package.json": [
+      "finepack"
     ]
+  },
+  "simple-git-hooks": {
+    "commit-msg": "npx commitlint --edit",
+    "pre-commit": "npx nano-staged"
   }
 }
